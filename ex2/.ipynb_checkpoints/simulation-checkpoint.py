@@ -53,22 +53,22 @@ def count_tokens(text):
 
 def save_results(i, promot_count, prompt, response, response_tokens, duration, queue_time, conversation_context_length, total_context_length):
     
-    with open(f"/ex2/outputs/user_{i}.txt", "a") as f:             # Generated response and statistics
+    with open(f"outputs/user_{i}.txt", "a") as f:             # Generated response and statistics
         f.write(f"========== Prompt {promot_count} ==========\n")
         f.write(f"Prompt: {prompt}\n\n")
         f.write(f"Response:\n{response}\n\n")
         f.write(f"[Duration: {duration:.2f}s | T/s: {response_tokens / duration:.2f} | Queue: {queue_time:.2f}s | Context: {conversation_context_length} tokens]\n\n\n")
 
-    with open(f"/ex2/plots/generation_speeds.txt", "a") as f:         # Response generation speed
+    with open(f"plots/generation_speeds.txt", "a") as f:         # Response generation speed
         f.write(f"{str(response_tokens/duration)}\n")
         
-    with open(f"/ex2/plots/durations.txt", "a") as f:                 # Response generation duration
+    with open(f"plots/durations.txt", "a") as f:                 # Response generation duration
         f.write(f"{duration}\n")
 
-    with open(f"/ex2/plots/queue_times.txt", "a") as f:               # Request's time in queue
+    with open(f"plots/queue_times.txt", "a") as f:               # Request's time in queue
         f.write(f"{queue_time}\n")
 
-    with open(f"/ex2/plots/total_context_length.txt", "a") as f:      # Context length after current response
+    with open(f"plots/total_context_length.txt", "a") as f:      # Context length after current response
         f.write(f"{total_context_length}\n")
         
 
@@ -82,7 +82,7 @@ def plot_requests_status(running, waiting, total_context_length):
     plt.title("Runing and Waiting Requests")
     plt.legend()
     plt.grid(True)
-    plt.savefig("/ex2/plots/Requests_Status_vs_Context_Length.png", dpi=300, bbox_inches="tight")
+    plt.savefig("plots/Requests_Status_vs_Context_Length.png", dpi=300, bbox_inches="tight")
     plt.clf()  # Clear the current figure
 
 
@@ -94,7 +94,7 @@ def plot_queue_times(queue_times):
     plt.ylabel("Queue time")
     plt.title("Requests Queue Time")
     plt.grid(True)
-    plt.savefig("/ex2/plots/Requests_Queue_Time.png", dpi=300, bbox_inches="tight")
+    plt.savefig("plots/Requests_Queue_Time.png", dpi=300, bbox_inches="tight")
     plt.clf()  # Clear the current figure
 
 
@@ -120,7 +120,7 @@ def plot_generation_speed(generation_speeds, total_context_length, queue_times):
     ax1.grid(True)
 
     # Save and clear
-    plt.savefig("/ex2/plots/Generation_Speed_vs_Context_Length.png", dpi=300, bbox_inches="tight")
+    plt.savefig("plots/Generation_Speed_vs_Context_Length.png", dpi=300, bbox_inches="tight")
     plt.clf()
 
 
@@ -186,9 +186,12 @@ def stream_chat(prompts, i):
 
 if __name__ == "__main__":
 
-    with open("ex2/prompts1.json", 'r', encoding='utf-8') as file:
-        prompts = json.load(file)
-
+    with open("prompts1.json", 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # Extract just the values into a list 
+    prompts = [data[key] for key in data.keys()]
+    
     with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
         futures = []
         for i in range(num_users):
@@ -201,22 +204,22 @@ if __name__ == "__main__":
     print("All threads done.")
 
 
-    with open("/ex2/plots/running.txt", "r") as f:
+    with open("plots/running.txt", "r") as f:
         running = [float(line.strip()) for line in f if line.strip()]
 
-    with open("/ex2/plots/waiting.txt", "r") as f:
+    with open("plots/waiting.txt", "r") as f:
         waiting = [float(line.strip()) for line in f if line.strip()]
 
-    with open("/ex2/plots/generation_speeds.txt", "r") as f:
+    with open("plots/generation_speeds.txt", "r") as f:
         generation_speeds = [float(line.strip()) for line in f if line.strip()]
 
-    with open("/ex2/plots/durations.txt", "r") as f:
+    with open("plots/durations.txt", "r") as f:
         durations = [float(line.strip()) for line in f if line.strip()]
 
-    with open("/ex2/plots/queue_times.txt", "r") as f:
+    with open("plots/queue_times.txt", "r") as f:
         queue_times = [float(line.strip()) for line in f if line.strip()]
 
-    with open("/ex2/plots/total_context_length.txt", "r") as f:
+    with open("plots/total_context_length.txt", "r") as f:
         total_context_length = [float(line.strip()) for line in f if line.strip()]
 
     plot_requests_status(running, waiting, total_context_length)
