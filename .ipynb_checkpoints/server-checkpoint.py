@@ -64,10 +64,10 @@ async def stream_vllm_response(messages):
                         running, waiting = await get_vllm_request_metrics()
                         print(f"Request completed - Running requests: {running}, Waiting requests: {waiting}")
 
-                        with open(f"/ex1/plots/running.txt", "a") as f:
+                        with open(f"/workspace/running.txt", "a") as f:
                             f.write(f"{running}\n")
 
-                        with open(f"/ex1/plots/waiting.txt", "a") as f:
+                        with open(f"/workspace/waiting.txt", "a") as f:
                             f.write(f"{waiting}\n")
                             
                         yield "data: [DONE]\n\n"
